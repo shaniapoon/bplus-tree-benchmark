@@ -1,40 +1,60 @@
-#include <string>
 #include <iostream>
+#include <vector>
+#include <cstring>
 
-// Include your B+ tree header
-#include "Parallel-BplusTree/btree.h"
+// B+ Tree header (C-style)
+extern "C" {
+    #include "Parallel-BplusTree/btree.h"
+}
 
 class BPlusTreeWrapper {
 private:
-    BTree tree;   // the actual B+ tree
+    node *root;
 
 public:
-    BPlusTreeWrapper() {
-        std::cout << "[Wrapper] B+ Tree initialized.\n";
+    BPlusTreeWrapper() : root(NULL) {
+        std::cout << "[Wrapper] B+ Tree initialized\n";
     }
 
-    // Insert operation
-    int Insert(const std::string &key, const std::string &value) {
-        tree.insert(key, value);
-        return 0; // success
-    }
-
-    // Read operation
-    int Read(const std::string &key, std::string &result) {
-        bool found = tree.find(key, result);
-        return found ? 0 : 1;   // 0 = success, 1 = not found
-    }
-
-    // Update = Delete + Insert
-    int Update(const std::string &key, const std::string &value) {
-        tree.remove(key);
-        tree.insert(key, value);
+    // INSERT: key + value
+    int Insert(int key, int value) {
+        root = insert(root, key, value);
         return 0;
     }
 
-    // Scan = range query
-    int Scan(const std::string &start_key, int count) {
-        tree.range_query(start_key, count);
+    // READ: single key lookup
+    int Read(int key, int &result) {
+        node *leaf = NULL;
+        record *r = find(root, key, false, &leaf);
+        if (r == NULL) return 1;
+        result = r->value;
+        return 0;
+    }
+
+    // UPDATE = delete + insert
+    int Update(int key, int value) {
+        root = remove(root, key);
+        root = insert(root, key, value);
+        return 0;
+    }
+
+    // DELETE
+    int Delete(int key) {
+        root = remove(root, key);
+        return 0;
+    }
+
+    // RANGE SCAN
+    int Scan(int start_key, int end_key, std::vector<int> &results) {
+        const int MAX = 10000;
+        int keys[MAX];
+        void *pointers[MAX];
+
+        int found = find_range(root, start_key, end_key, false, keys, pointers);
+        for (int i = 0; i < found; i++) {
+            record *r = (record *) pointers[i];
+            results.push_back(r->value);
+        }
         return 0;
     }
 };
