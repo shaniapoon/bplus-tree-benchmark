@@ -729,7 +729,7 @@ node *remove_entry(node *root, node *n, int key, void *pointer) {
     return redistribute_nodes(root, n, neighbor, neighbor_index, k_prime_index, k_prime);
 }
 
-node *remove (node *root, int key) {
+node *bptree_remove (node *root, int key) {
   node *key_leaf = NULL;
   record *key_record = NULL;
 

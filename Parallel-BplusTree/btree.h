@@ -63,7 +63,7 @@ node *redistribute_nodes(node *root, node *n, node *neighbor,
              int neighbor_index,
              int k_prime_index, int k_prime);
 node *remove_entry(node *root, node *n, int key, void *pointer);
-node *remove (node *root, int key);
+node *bptree_remove (node *root, int key);
 
 // decides which subtree the current insertion is trying to modify
 int find_top_level_subtree(node *root, int key);
