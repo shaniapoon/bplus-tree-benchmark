@@ -41,7 +41,7 @@ Compile the benchmark:
 
 g++ -std=c++17 -O3 benchmark.cpp btree.cpp utils.cpp -o bpbench -pthread -fpermissive
 
-▶️ Running Benchmarks
+Running Benchmarks
 
 To run a single configuration:
 
